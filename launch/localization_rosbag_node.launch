@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+
+  <arg name="config"  default="/$(find se2c_rgbdw_slam)/data/NakBot/kinect2_new.yaml"/>
+  <arg name="bow"  default="/$(find se2c_rgbdw_slam)/data/orb_vocab/orb_vocab.dbow2"/>
+  <arg name="log_dir"  default="$(find se2c_rgbdw_slam)/log/"/>
+
+  <!-- map path for localization  -->
+  <arg name="map_db_path"  default="$(find se2c_rgbdw_slam)/log/map.db"/>
+  <arg name="is_mapping"  default="0"/> <!--1...true 0...false -->
+
+  <arg name="iamge_color"  default="/kinect2/qhd/image_color"/>
+  <arg name="image_depth"  default="/kinect2/qhd/image_depth_rect"/>
+
+  <param name="slam_config_path" type="string" value="$(arg config)"/>
+
+
+  <node pkg="se2c_rgbdw_slam" type="localization_from_rosbag_node" name="localization_from_rosbag_node" output="screen" launch-prefix="$(arg launch_prefix)"
+    args="-v $(arg bow) -c $(arg config) -i $(arg iamge_color) -d $(arg image_depth) -m $(arg is_mapping) --map-db $(arg map_db_path) -l $(arg log_dir)">
+  </node>
+
+  <!-- set arg for rviz-->
+  <arg name="rvizconfig" default="$(find se2c_rgbdw_slam)/rviz/rviz.rviz"/>  
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+
+</launch>

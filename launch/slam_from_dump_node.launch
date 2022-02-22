@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+
+  <arg name="config"  default="$(find se2c_rgbdw_slam)/data/NakBot/kinect2_new.yaml"/>
+  <arg name="bow"  default="$(find se2c_rgbdw_slam)/data/orb_vocab/orb_vocab.dbow2"/>
+  <arg name="log_dir"  default="$(find se2c_rgbdw_slam)/log/"/>
+
+
+  <arg name="image_color"  default="/home/kitajima/dataset/nakbot_real/dump_dataset/2021-06-10-15-44-36-flat2/rgb"/>
+  <arg name="image_depth"  default="/home/kitajima/dataset/nakbot_real/dump_dataset/2021-06-10-15-44-36-flat2/depth"/>
+  <arg name="encoder"      default="/home/kitajima/dataset/nakbot_real/dump_dataset/2021-06-10-15-44-36-flat2/encoder/encoder.csv"/>
+  <arg name="use_rviz" default="true"/>
+
+  <param name="slam_config_path" type="string" value="$(arg config)"/>
+
+  <node pkg="se2c_rgbdw_slam" type="slam_from_dump_node" name="slam_from_dump_node" output="screen" launch-prefix="$(arg launch_prefix)"
+    args="-v $(arg bow) -c $(arg config) --rgb-dir $(arg image_color) --depth-dir $(arg image_depth) --enc-path $(arg encoder)  -l $(arg log_dir)">
+  </node>
+
+  <!-- set arg for rviz-->
+  <group if="$(arg use_rviz)">
+      <arg name="rvizconfig" default="$(find se2c_rgbdw_slam)/rviz/rviz.rviz"/>  
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+
+      <include file="$(find se2c_rgbdw_slam)/launch/robot_model.launch"/>
+  </group>
+
+
+</launch>

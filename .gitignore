@@ -1,0 +1,7 @@
+*.bak
+log/
+memo/
+.vscode/
+scripts/__pycache__/
+bak/
+src/test/

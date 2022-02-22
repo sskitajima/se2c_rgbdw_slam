@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="map_file" default="$(find se2c_rgbdw_slam)/log/octomap.bt"/>
+	<arg name="rviz_file" default="$(find se2c_rgbdw_slam)/rviz/octomap.rviz"/>
+    <arg name="frame_id" default="odom"/>
+
+	<node name="octomap_server" pkg="octomap_server" type="octomap_server_node" args="$(arg map_file)">
+		<remap from="cloud_in" to="/openvslam/landmark_dummy" />
+		<param name="frame_id" type="string" value="$(arg frame_id)" />
+		<param name="latch" value="true" />
+		<param name="resolution" value="0.05" />
+	</node>
+
+	<node pkg="se2c_rgbdw_slam" type="dummy_cloud_publisher" name="dummy_cloud_publisher"/>
+
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_file)" />
+
+</launch>

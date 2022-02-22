@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<robot name="my_robo"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <joint name="camera_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.0175 0 0.3525"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.065 0.25 0.04"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.25 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="openni_camera"/>
+    <origin xyz="0.0325 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="openni_camera"/>
+
+
+  <!-- parameter reference https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats -->
+  <gazebo reference="openni_camera">
+    <sensor type="depth" name="Kinectv2">
+      <always_on>true</always_on>
+      <update_rate>30.0</update_rate>
+
+      <camera name="Kinectv2">
+        <pose>0 0 0 0 0 0</pose>
+        <!-- <horizontal_fov>1.221730</horizontal_fov> viewing angle 70degree => kinectV2 -->
+        <horizontal_fov>1.4813863886</horizontal_fov>        <!-- viewing angle 85degree => f=525, width=960 -->
+        <!-- <horizontal_fov>0.994838</horizontal_fov> viewing angle 57degree => kinectV1 -->
+        <image>
+          <width>960</width>
+          <height>540</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.0001</near>
+          <!-- <far>8.0</far> -->
+          <far>20.0</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.5</stddev>
+        </noise>
+      </camera>
+
+
+      <plugin name="camera_controller" filename="libgazebo_ros_openni_kinect.so">
+        <baseline>0.075</baseline>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>kinect_v2</cameraName>
+        <frameName>openni_camera</frameName>
+
+        <imageTopicName>/camera/rgb/image_color</imageTopicName>
+        <cameraInfoTopicName>/camera/rgb/camera_info</cameraInfoTopicName>
+        <depthImageTopicName>/camera/depth/image</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+
+        <pointCloudCutoff>0.1</pointCloudCutoff>
+        <pointCloudCutoffMax>6.0</pointCloudCutoffMax>
+
+        <distortionK1>0.001</distortionK1>
+        <distortionK2>0.001</distortionK2>
+        <distortionK3>0.001</distortionK3>
+        <distortionT1>0.001</distortionT1>
+        <distortionT2>0.001</distortionT2>
+        <CxPrime>0.0</CxPrime>
+        <Cx>477</Cx>
+        <Cy>261</Cy>
+        <focalLength>524.954599</focalLength>
+        <hackBaseline>0</hackBaseline>
+      </plugin>
+
+    </sensor>
+
+    <allow_auto_disable>0</allow_auto_disable>
+  </gazebo>
+
+</robot>
