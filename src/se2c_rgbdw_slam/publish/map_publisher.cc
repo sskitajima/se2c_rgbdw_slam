@@ -37,7 +37,6 @@ void map_publisher::set_current_cam_pose(const Mat44_t& cam_pose_cw) {
     cam_pose_cw_(3,1) = cam_pose_cw(3,1);
     cam_pose_cw_(3,2) = cam_pose_cw(3,2);
     cam_pose_cw_(3,3) = cam_pose_cw(3,3);
-    // spdlog::debug("map_publisher::set_current_cam_pose end");
 }
 
 Mat44_t map_publisher::get_current_cam_pose() {

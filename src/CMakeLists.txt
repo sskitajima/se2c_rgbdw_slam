@@ -218,7 +218,6 @@ add_library(se2c_rgbdw_slam_node_lib
 )
 
 foreach(SRC_FILE IN LISTS SE2C_RGBDW_SLAM_LIB_SRC_FILES)
-    # message(STATUS "test SRC_FILES: ${SRC_FILE}")
     target_sources(se2c_rgbdw_slam_node_lib
         PRIVATE
         ${SRC_FILE}

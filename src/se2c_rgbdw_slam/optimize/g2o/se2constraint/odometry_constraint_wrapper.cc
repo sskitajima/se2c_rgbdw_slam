@@ -28,11 +28,6 @@ namespace se2c {
         info_odom_(5,5) = 1e-18;
 
         update_param();
-
-        // std::cout << "[odometry_constraint_wrapper]\n";
-        // std::cout << T_bc_ << std::endl;
-        // std::cout << info_odom_ << std::endl;
-        // std::cout << std::endl;
     }
 
     void odometry_constraint_wrapper::update_param()
@@ -64,61 +59,23 @@ namespace se2c {
         openvslam::Mat66_t inv_JJl = ::openvslam::util::se2c::inv_JJl(-1 * xi_cc);
         openvslam::Mat66_t Jbc = -1 * Adj_T_bc_ * inv_JJl;
 
-        // info_odom_(3,3) = info_odom(5,5);
-        // info_odom_(4,4) = info_odom(0,0);
-        // info_odom_(2,2) = info_odom(1,1);
-
-        // info_odom_(3,2) = info_odom(0,5);       // x
         info_odom_(3,3) = info_odom(0,0);       // x
-        // info_odom_(3,4) = info_odom(0,1);       // x
-
-        // info_odom_(4,2) = info_odom(1,5);       // y
-        // info_odom_(4,3) = info_odom(1,0);       // y
         info_odom_(4,4) = info_odom(1,1);       // y
-
         info_odom_(2,2) = info_odom(5,5);       // th
-        // info_odom_(2,3) = info_odom(5,0);       // th
-        // info_odom_(2,4) = info_odom(5,1);       // th
 
         openvslam::Mat66_t info_cam = Jbc.transpose() * info_odom_  * Jbc;
-
-        // openvslam::Mat66_t info_cam = Adj_T_bc_.transpose() * info_odom  * Adj_T_bc_;
-        // openvslam::Mat66_t info_cam = openvslam::Mat66_t::Identity();
-        // info_cam(0,0) = 1e-5;
-        // info_cam(1,1) = 1e5;
-        // info_cam(2,2) = 1e-5;
-        // info_cam(3,3) = 1e5;
-        // info_cam(4,4) = 1e-5;
-        // info_cam(5,5) = 1e5;
-
 
         for(int i = 0; i < 6; i++)
             for(int j = 0; j < i; j++)
                 info_cam(i,j) = info_cam(j,i);
 
-        // test
         info_cam *= num_feature_matching / 100.;
-        // std::cout << "[odometry_constraint_wrapper::create_odometry_constraint()] num_feature_matching " << num_feature_matching << std::endl;
 
         odometry_constraint_edge* odomConstraint = new odometry_constraint_edge();
         odomConstraint->setInformation(info_cam);
         odomConstraint->setMeasurement(odom_measurement_cc_g2o);
         odomConstraint->vertices()[0] = optimizer.vertex(vId1);     // from
         odomConstraint->vertices()[1] = optimizer.vertex(vId2);     // to
-
-
-        // using std::cout;
-        // using std::endl;
-        // cout << "vId " << vId1 << " " << vId2 << endl;
-        // cout << "odom_measurement\n" << odom_measurement_bb << endl;
-        // cout << "measurement_cc\n" << odom_measurement_cc << endl;
-        // cout << "info_odom\n" << info_odom.diagonal() << endl;
-        // cout << "info_odom_\n" << info_odom_ << endl;
-        // cout << "xi_cc\n" << xi_cc << endl;
-        // cout << "Adj_T_bc_\n" << Adj_T_bc_ << endl;
-        // cout << "Jbc\n" << Jbc << endl;
-        // cout << "info_cam\n" << info_cam << endl;
-        // cout << endl;
 
         return odomConstraint;
     }

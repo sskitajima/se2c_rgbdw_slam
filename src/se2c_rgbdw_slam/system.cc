@@ -585,7 +585,6 @@ void system::mainloop()
         else
         {   
             // 5ms
-            // spdlog::debug("waiting....");
             usleep(5000);
         }
     }
@@ -612,17 +611,9 @@ Mat44_t system::mainprocess()
     }
     else
     {
-        // TODO
-        // encoder_odometry_->integrate_measurement_velocity(wheel_odom_from_last_kf_, wheel_odom_from_last_kf_, wheel_cov_from_last_kf_, wheel_cov_from_last_kf_, rgbd_frame.timestamp_, num_processed_encoder_);
-
         spdlog::error("[system::mainprocess()] not supported for wheel odometry for linear and angular velocity.");
         std::abort();
     }
-
-    // std::cout << "wheel_odom_from_last_kf_\n" << wheel_odom_from_last_kf_ << std::endl;
-    // std::cout << "wheel_cov_from_last_kf_\n" << wheel_cov_from_last_kf_ << std::endl;
-    // std::cout << std::endl;
-
 
     const auto t_enc = timer_.lap();
 
@@ -634,21 +625,13 @@ Mat44_t system::mainprocess()
 
     if(is_keyframe)
     {
-        // cout << "wheel_odom_from_last_kf_ \n" << wheel_odom_from_last_kf_ << std::endl;
-
         wheel_odom_from_last_kf_ = Mat44_t::Identity();
         wheel_cov_from_last_kf_ = Mat66_t::Identity() * initial_cov_factor_;
     }
 
-    // cout << "pose_irr_r \n" << pose_irr_r << std::endl;
-
     if(!is_performance_mode_)
     {
-        // 最終的なposeをpublishする
         add_publish_poses(pose_irr_r, wheel_cov_from_last_kf_, rgbd_frame.timestamp_);
-        // Mat44_t global_wheel_odom;
-        // encoder_odometry_->get_global_odometry(global_wheel_odom);
-        // add_publish_poses(global_wheel_odom, wheel_cov_from_last_kf_, rgbd_frame.timestamp_);
 
         frame_publisher_->update(tracker_);
         if (tracker_->tracking_state_ == tracker_state_t::Tracking) {

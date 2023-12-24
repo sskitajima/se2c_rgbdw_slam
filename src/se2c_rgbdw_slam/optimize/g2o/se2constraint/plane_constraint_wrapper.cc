@@ -26,14 +26,6 @@ namespace se2c {
         info_bib_(5,5) = plane_config_->info_z_;
 
         update_param();
-
-        // std::cout << "[plane_constraint_wrapper()]\n";
-        // std::cout << extPara_rc_ << std::endl;
-        // std::cout << extPara_cr_ << std::endl;
-        // std::cout << T_bc_ << std::endl;
-        // std::cout << T_cb_ << std::endl;
-        // std::cout << info_bib_ << std::endl;
-        // std::cout << coord_transformer_ << std::endl;
     }
 
     void plane_constraint_wrapper::update_param()
@@ -69,8 +61,6 @@ namespace se2c {
         xyz_bib[2] =0;
         T_bib.setTranslation(xyz_bib);
 
-        // std::cout << "T_bib2\n" << T_bib << std::endl;
-
         // measurement
         ::g2o::SE3Quat T_cib = T_cb_ * T_bib;
 
@@ -85,18 +75,7 @@ namespace se2c {
             for(int j = 0; j < i; j++)
                 info_cib(i,j) = info_cib(j,i);
 
-        // std::cout << "cam_pose_cw\n" << cam_pose_cw << std::endl; 
-        // std::cout << "J_bb_cc\n" << J_bb_cc << std::endl; 
-        // std::cout << "info_cib\n" << info_cib << std::endl; 
-        // std::cout << "T_cib\n" << T_cib << std::endl; 
-        // std::cout << "xi_ibb_measurement\n" << xi_ibb_measurement << std::endl;
-        // std::cout << "inv_JJl\n" << inv_JJl << std::endl;
-        // std::cout << "T_cib.inverse() * T_cb_\n" << T_cib.inverse() * T_cb_ << std::endl;
-        // std::cout << "T_bc_.log()\n" << T_bc_.log() << std::endl;
-
         info_cib *= num_feature_matching / 100.;
-        // info_cib *= num_feature_matching;
-        // std::cout << "[plane_constraint_wrapper::create_plane_constraint()] num_feature_matching " << num_feature_matching << std::endl; 
 
 
         plane_constraint_edge* planeConstraint = new plane_constraint_edge();

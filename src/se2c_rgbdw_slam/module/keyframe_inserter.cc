@@ -184,8 +184,6 @@ data::keyframe* keyframe_inserter::insert_new_keyframe(data::frame& curr_frm/*, 
         map_db_->add_landmark(lm);
     }
 
-    // std::cout << "keyframe_inserter::insert_new_keyframe() keyframe id: " << keyfrm->id_ << " : num landmarks of this KF: " << keyfrm->get_valid_landmarks().size() << std::endl;
-
     // keyframeをqueueして終わり
     queue_keyframe(keyfrm);
     return keyfrm;

@@ -29,15 +29,6 @@ void odometry_constraint_edge::computeError()
     g2o::se3::shot_vertex *v1 = static_cast<g2o::se3::shot_vertex*>(_vertices[1]);       // to 
     ::g2o::SE3Quat err = _measurementInverse * v0->estimate() * v1->estimate().inverse() ;       // equation (22)
     _error = err.log();
- 
-    // std::cout << "odometry_constraint_edge computeError odometry constraint id: "<< _id << "\n" << _error.transpose() << std::endl;
-    // std::cout << "err "                                      << "\n" << err                                       << std::endl;
-    // std::cout << "v0 "                                       << "\n" << v0->estimate()                            << std::endl;
-    // std::cout << "v1 "                                       << "\n" << v1->estimate()                            << std::endl;
-    // std::cout << "_measurementInverse "                      << "\n" << _measurementInverse                       << std::endl;
-    // std::cout << "v1->estimate().inverse() "                 << "\n" << v1->estimate().inverse()                  << std::endl;
-    // std::cout << "v0->estimate() * v1->estimate().inverse() "<< "\n" << v0->estimate() * v1->estimate().inverse() << std::endl;
-    // std::cout << std::endl;
 }
 
 void odometry_constraint_edge::setMeasurement(const ::g2o::SE3Quat& m)
@@ -45,9 +36,6 @@ void odometry_constraint_edge::setMeasurement(const ::g2o::SE3Quat& m)
     _measurement = m;    
    _measurementInverse = m.inverse();
    _measurementInverseAdj = _measurementInverse.adj();
-
-//    std::cout << "_measurementInverseAdj\n " << _measurementInverseAdj << std::endl;
-//    std::cout << "measurement\n " << m << std::endl;
 }
 
 // ヤコビアンの定義

@@ -50,11 +50,6 @@ public:
         return std::chrono::duration_cast<std::chrono::milliseconds>(fin_time_ - start_time_).count();
     }
 
-    // void reset()
-    // {
-
-    // };
-
     void print(const std::string &func, const std::string message)
     {
         if (mode_)

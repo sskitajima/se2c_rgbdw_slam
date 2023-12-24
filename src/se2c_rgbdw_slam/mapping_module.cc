@@ -138,8 +138,6 @@ void mapping_module::abort_local_BA() {
 }
 
 void mapping_module::mapping_with_new_keyframe() {
-    // const auto st = std::chrono::system_clock::now();
-
     // dequeue
     {
         std::lock_guard<std::mutex> lock(mtx_keyfrm_queue_);
@@ -154,19 +152,11 @@ void mapping_module::mapping_with_new_keyframe() {
     // store the new keyframe to the database
     store_new_keyframe();
 
-    // const auto t_score_new_kf = std::chrono::system_clock::now();
-    // std::cout << "mapping_module::store_new_keyframe() keyframe id: " << cur_keyfrm_->id_ << " : num landmarks of this KF: " << cur_keyfrm_->get_valid_landmarks().size() << std::endl;
-
     // remove redundant landmarks
     local_map_cleaner_->remove_redundant_landmarks(cur_keyfrm_->id_);
 
-    // std::cout << "mapping_module::remove_redundant_landmarks() keyframe id: " << cur_keyfrm_->id_ << " : num landmarks of this KF: " << cur_keyfrm_->get_valid_landmarks().size() << std::endl;
-
     // triangulate new landmarks between the current frame and each of the covisibilities
     create_new_landmarks();
-
-    // const auto t_create_new_lm = std::chrono::system_clock::now();
-    // std::cout << "mapping_module::create_new_landmarks() keyframe id: " << cur_keyfrm_->id_ << " : num landmarks of this KF: " << cur_keyfrm_->get_valid_landmarks().size() << std::endl;
 
     if (keyframe_is_queued()) {
         return;
@@ -175,13 +165,9 @@ void mapping_module::mapping_with_new_keyframe() {
     // detect and resolve the duplication of the landmarks observed in the current frame
     update_new_keyframe();
 
-    // std::cout << "mapping_module::update_new_keyframe() keyframe id: " << cur_keyfrm_->id_ << " : num landmarks of this KF: " << cur_keyfrm_->get_valid_landmarks().size() << std::endl;
-
     if (keyframe_is_queued() || pause_is_requested()) {
         return;
     }
-
-    // const auto t_update_new_kf = std::chrono::system_clock::now();
 
     // local bundle adjustment
     abort_local_BA_ = false;
@@ -194,16 +180,6 @@ void mapping_module::mapping_with_new_keyframe() {
 
     //! Proposed
     octomap_mapping_->insert_keyframe(cur_keyfrm_);
-
-    // const auto end = std::chrono::system_clock::now();
-
-    // const auto t1 = std::chrono::duration_cast<std::chrono::milliseconds>(t_score_new_kf - st).count();
-    // const auto t2 = std::chrono::duration_cast<std::chrono::milliseconds>(t_create_new_lm - t_score_new_kf).count();
-    // const auto t3 = std::chrono::duration_cast<std::chrono::milliseconds>(t_update_new_kf - t_create_new_lm).count();
-    // const auto t4 = std::chrono::duration_cast<std::chrono::milliseconds>(t_local_BA - t_update_new_kf).count();    
-    // const auto t5 = std::chrono::duration_cast<std::chrono::milliseconds>(end - t_local_BA).count();    
-    // const auto t_all = std::chrono::duration_cast<std::chrono::milliseconds>(end - st).count();
-    // spdlog::info("[mapping module] time {} {} {} {} {} {}", t1, t2, t3, t4, t5, t_all);
 }
 
 void mapping_module::store_new_keyframe() {

@@ -37,10 +37,6 @@ public:
 
     double odom_info_factor_xy_;
     double odom_info_factor_th_;
-    // double odom_ath_;
-    // double odom_bx_;
-    // double odom_by_;
-    // double odom_bth_;  
 };
 
 

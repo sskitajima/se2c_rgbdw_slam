@@ -25,16 +25,7 @@ void plane_constraint_edge::computeError()
 {
     g2o::se3::shot_vertex *v = static_cast<g2o::se3::shot_vertex*>(_vertices[0]);
     ::g2o::SE3Quat err = _measurementInverse * v->estimate() ;
-    _error = err.log();
- 
-    // std::cout << "plane_constraint_edge computeError plane constraint id: "<< _id << "\n" << err << "\n" << _error << std::endl;
-
-
-    //////////////////////////////////
-
-    // ::g2o::SE3Quat err = _transform_rc * _measurementInverse * v->estimate() * _transform_cr;
-    // _error = err.log();
-    // std::cout << "plane_constraint_edge computeError plane constraint id: "<< _id << "\n" << err << "\n" << _error << std::endl;
+    _error = err.log(); 
 }
 
 void plane_constraint_edge::setMeasurement(const ::g2o::SE3Quat& measurement_pose_cir)
@@ -42,12 +33,6 @@ void plane_constraint_edge::setMeasurement(const ::g2o::SE3Quat& measurement_pos
     _measurement = measurement_pose_cir;    
    _measurementInverse = measurement_pose_cir.inverse();
    _measurementInverseAdj = _measurementInverse.adj();
-//    _measurement_irc_Adj = (_transform_rc * _measurementInverse).adj();
-
-//    std::cout << "measurement\n " << _measurement << std::endl;
-//    std::cout << "measurementInverse\n " << _measurementInverse << std::endl;
-// //    std::cout << "_measurement_irc_Adj\n " << _measurement_irc_Adj<< std::endl;
-//    std::cout << "_measurementInverseAdj\n " << _measurementInverseAdj << std::endl;
 }
 
 // ヤコビアンの定義

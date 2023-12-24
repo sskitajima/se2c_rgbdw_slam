@@ -260,14 +260,6 @@ Mat44_t tracking_module::visual_encoder_track(const cv::Mat& img, const cv::Mat&
                 curr_frm_.landmarks_.at(idx) = nullptr;
             }
         }
-
-        // Mat44_t odom_from_last_kf = curr_frm_.odom_from_ref_kf_->second.first;
-        // Mat44_t curr_pose_from_last_kf =  extrinsic_param_rc_ * last_keyfrm_->get_cam_pose() *  curr_frm_.cam_pose_cw_.inverse() * extrinsic_param_cr_;
-        // // std::cout << "[tracking_module() odom_from_last_kf]\n" << odom_from_last_kf << std::endl << std::endl;
-        // // std::cout << "[tracking_module() curr_pose_from_last_kf]\n" << curr_pose_from_last_kf << std::endl;
-        // std::cout << (curr_pose_from_last_kf.block(0,3, 3, 1) - odom_from_last_kf.block(0,3,3,1) ).transpose() << std::endl;
-
-        // std::cout << std::endl << std::endl;
     }
    
 
@@ -400,10 +392,6 @@ void tracking_module::update_motion_model() {
         last_frm_cam_pose_wc.block<3, 1>(0, 3) = last_frm_.get_cam_center();
         velocity_is_valid_ = true;
         velocity_ = curr_frm_.cam_pose_cw_ * last_frm_cam_pose_wc;
-
-        // spdlog::debug("velocity print");
-        // std::cout << "velocity\n";
-        // std::cout << velocity_ << std::endl;     // 4x4 mat
     }
     else {
         velocity_is_valid_ = false;

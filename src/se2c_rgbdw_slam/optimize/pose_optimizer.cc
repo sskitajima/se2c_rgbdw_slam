@@ -113,13 +113,8 @@ unsigned int pose_optimizer::optimize(data::frame& frm) const {
     // Proposed
     // Frameがse2上にあるという拘束を追加する
     #ifdef ENABLE_PLANE_CONSTRAINT
-    // std::cout << "before optimization: cam_pose_cw\n" << frm.cam_pose_cw_ << "\ninv_sigma_sq " << frm.inv_level_sigma_sq_.at(0) << " " << frm.inv_level_sigma_sq_.at(4) << std::endl; 
     optimize::g2o::se2c::plane_constraint_edge* plane_constraint = plane_constraint_wrapper_->create_plane_constraint(optimizer, frm.cam_pose_cw_, sqrt_chi_sq, frm.id_, num_init_obs);
     optimizer.addEdge(plane_constraint);
-    // optimizer.setVerbose(true);
-    // algorithm->printProperties(std::cout);
-    // std::cout << "cam_pose\n" << frm.cam_pose_cw_ << std::endl; 
-    // std::cout << "[pose_optimizer::optimize()] num LM edge: " << num_init_obs << std::endl;
     #endif
 
     #ifdef ENABLE_ODOMETRY_CONSTRAINT
@@ -148,10 +143,6 @@ unsigned int pose_optimizer::optimize(data::frame& frm) const {
                                                                     frm.id_,
                                                                     num_init_obs);
     optimizer.addEdge(odometry_constraint);
-    // std::cout << "odom_measurement t-1 to t\n" << (frm.odom_from_ref_kf_)->second.first << std::endl;
-    // // std::cout << "odom_info\n" << (frm.odom_from_ref_kf_)->second.second << std::endl;
-    // const Mat44_t T_RC = (odometry_constraint_wrapper_->coord_transformer_)->get_rc();
-    // std::cout << "current  t-1 to t\n" << T_RC * (keyfrm_from->get_cam_pose() * frm.cam_pose_cw_.inverse() ) * T_RC.inverse() << std::endl;
     #endif
 
     // optimizer.setVerbose(true);

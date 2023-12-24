@@ -40,9 +40,6 @@ public:
             paths.push_back(file.path());
 
         std::sort(paths.begin(), paths.end());
-
-        // for(auto path_it=paths.begin(); path_it!=paths.end(); ++path_it)
-        //     std::cout << *path_it << std::endl;;
     }
 
 

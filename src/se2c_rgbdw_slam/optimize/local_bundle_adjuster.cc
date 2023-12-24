@@ -148,40 +148,6 @@ void local_bundle_adjuster::optimize(openvslam::data::keyframe* curr_keyfrm, boo
         keyfrm_id_and_num_reproj_lm[local_keyfrm->id_] = 0;
         auto keyfrm_vtx = keyfrm_vtx_container.create_vertex(local_keyfrm, local_keyfrm->id_ == 0);
         optimizer.addVertex(keyfrm_vtx);
-
-        //! Proposed
-        // #ifdef ENABLE_PLANE_CONSTRAINT
-        // auto plane_constraint = plane_constraint_wrapper_->create_plane_constraint(optimizer, local_keyfrm->get_cam_pose(), sqrt_chi_sq, local_keyfrm->id_);
-        // optimizer.addEdge(plane_constraint);
-        // #endif
-
-        // #ifdef ENABLE_ODOMETRY_CONSTRAINT
-        // if(local_keyfrm->odom_from_ref_kf_ == nullptr) continue;
-
-        // data::keyframe* keyfrm_from = local_keyfrm->odom_from_ref_kf_->first;
-
-        // if(keyfrm_from == nullptr)
-        // {
-        //     std::cout << "[local_bundle_adjuster::optimize()] keyfrm_from is nullptr\n";
-        //     continue;
-        // }
-        // unsigned int keyfrm_from_id = keyfrm_from->id_;
-        // auto result = local_keyfrms.find(keyfrm_from_id);
-        // if(result == local_keyfrms.end()) continue;
-
-        // auto odometry_constraint 
-        //     = odometry_constraint_wrapper_->create_odometry_constraint( optimizer, 
-        //                                                                 (local_keyfrm->odom_from_ref_kf_)->second.first, 
-        //                                                                 (local_keyfrm->odom_from_ref_kf_)->second.second, 
-        //                                                                 sqrt_chi_sq,
-        //                                                                 keyfrm_from_id, 
-        //                                                                 local_keyfrm->id_ );
-        // optimizer.addEdge(odometry_constraint);
-
-        // // std::cout << "[local_bundle_adjuster::optimize()]: this KF id(vId2): " << local_keyfrm->id_ << " from_id(vId1): " << keyfrm_from_id << std::endl;
-        // // std::cout << "addVertex id: " << local_keyfrm->id_ << std::endl;
-
-        // #endif
     }
 
     // fixed keyframesをoptimizerにセット
@@ -192,14 +158,6 @@ void local_bundle_adjuster::optimize(openvslam::data::keyframe* curr_keyfrm, boo
         keyfrm_id_and_num_reproj_lm[fixed_keyfrm->id_] = 0;
         auto keyfrm_vtx = keyfrm_vtx_container.create_vertex(fixed_keyfrm, true);
         optimizer.addVertex(keyfrm_vtx);
-
-        //! Proposed
-        // #ifdef ENABLE_PLANE_CONSTRAINT
-        // auto plane_constraint = plane_constraint_wrapper_->create_plane_constraint(optimizer, fixed_keyfrm->get_cam_pose(), sqrt_chi_sq, fixed_keyfrm->id_);
-        // optimizer.addEdge(plane_constraint);
-        // #endif
-
-        // std::cout << "fixed KF addVertex id: " << fixed_keyfrm->id_ << std::endl;
     }
 
     // 4. keyframeとlandmarkのvertexをreprojection edgeで接続する
@@ -288,9 +246,6 @@ void local_bundle_adjuster::optimize(openvslam::data::keyframe* curr_keyfrm, boo
                                                                         it.second
                                                                         );
         optimizer.addEdge(odometry_constraint);
-
-        // std::cout << "[local_bundle_adjuster::optimize()]: this KF id(vId2): " << keyfrm->id_ << " from_id(vId1): " << keyfrm_from_id << std::endl;
-        // std::cout << "addVertex id: " << keyfrm->id_ << std::endl;
         #endif
     }
 

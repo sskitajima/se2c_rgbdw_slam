@@ -55,10 +55,6 @@ public:
     // encoderのカウンタ値を用いるもの
     void integrate_measurement_encoder(const Mat44_t& last_pose, Mat44_t& next_pose, const Mat66_t& last_cov, Mat66_t& next_cov, const double frame_time, int& num_processed_encoder_);
 
-    // 並進速度と角速度を用いるもの
-    // void integrate_measurement_velocity(const Mat44_t& last_pose, Mat44_t& next_pose, const Mat66_t& last_cov, Mat66_t& next_cov, const double frame_time, int& num_processed_encoder_);
-
-
     void motion_model();
     Mat33_t cov_update_encoder(const Mat33_t& last_cov, const Mat22_t& displacement_cov, const double sr, const double sl, const double th);
 

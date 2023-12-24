@@ -39,7 +39,6 @@ void read_encoder_file(const string& encoder_path, vector<double>& timestamp, ve
 
 
     while (getline(f, line)) {
-        // std::cout << "#" << str << std::endl;
         std::vector<std::string> sub_str;
         split(line, sep, sub_str);
 
@@ -48,14 +47,7 @@ void read_encoder_file(const string& encoder_path, vector<double>& timestamp, ve
         enc_r.push_back(stod(sub_str[2].c_str()));   
 
         sub_str.clear();     
-    }
-    
-    // cout << setprecision(15);
-    // for(int i=0; i<100; i++)
-    // {
-    //     cout << timestamp[i] << " " << enc_r[i] << " " << enc_l[i] << endl;
-    // }
-
+    }    
 }
 
 
@@ -139,10 +131,6 @@ int main(int argc, char* argv[])
     vector<double> enc_l;
     read_encoder_file(encoder_data_path, enc_timestamps, enc_r, enc_l);
 
-    // for(auto enc_timestamp : enc_timestamps) std::cout << enc_timestamp << std::endl;
-    // for(auto r : enc_r) std::cout << r << std::endl; 
-    // for(auto l : enc_l) std::cout << l << std::endl; 
-
     ////////////////////////////////////////////////////////////////////////////////////////
     // launch slam node
 
@@ -211,8 +199,6 @@ int main(int argc, char* argv[])
                 enc_delta_t = *it_timestamp_enc - enc_last_time;
                 node->add_encoder_measurement(*it_enc_r, *it_enc_l, enc_delta_t, *it_timestamp_enc);
                 enc_last_time = *it_timestamp_enc;
-
-                // cout << std::setprecision(18) << "frame time " << timestamp_frame << " enc time " << *it_timestamp_enc << std::endl; 
 
                 it_timestamp_enc++;
                 it_enc_l++;

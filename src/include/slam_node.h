@@ -1,8 +1,6 @@
 #ifndef OPENVSLAM_ROS_SLAM_NODE_H
 #define OPENVSLAM_ROS_SLAM_NODE_H
 
-/////////////////////////////////////
-
 // oepnvslam
 #include "se2c_rgbdw_slam/system.h"
 #include "se2c_rgbdw_slam/module/octomap_mapping.h"
@@ -22,8 +20,6 @@
 #include <message_filters/synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <cv_bridge/cv_bridge.h>
-
-/////////////////////////////////////
 
 namespace openvslam_ros
 {

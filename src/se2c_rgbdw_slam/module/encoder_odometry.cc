@@ -50,10 +50,6 @@ Mat33_t encoder_odometry::cov_update_encoder(const Mat33_t& last_cov, const Mat2
     current_cov.block(0, 3, 3, 2) = Eigen::MatrixXd::Zero(3, 2);
     Mat33_t updated_cov = jacobian * current_cov * jacobian.transpose();
 
-    // std::cout << "current cov\n " << current_cov << std::endl;
-    // std::cout << "jacobian\n " << jacobian << std::endl;
-    // std::cout << "updated_cov\n " << updated_cov << std::endl;
-
     return updated_cov;
 }
 
@@ -90,8 +86,6 @@ void encoder_odometry::add_measurement(encoder enc)
 {
     std::lock_guard<std::mutex> lock(mtx_encoders_);
     encoders_.push_back(enc);
-    // spdlog::debug("add encoder measurement {}", enc.v_);
-
 }
 
 
@@ -144,12 +138,8 @@ void encoder_odometry::get_global_odometry(Mat44_t& global_odom)
 void encoder_odometry::integrate_measurement_encoder(const Mat44_t& last_pose, Mat44_t& next_pose, const Mat66_t& last_cov, Mat66_t& next_cov, const double frame_time, int& num_processed_encoder_)
 {
     double x, y, th;
-
-    // Mat33_t pose = util::converter::SE3toSE2(last_pose);
     Mat33_t cov = util::converter::SE3covtoSE2cov(last_cov);
     util::converter::SE3toSE2param(last_pose, x, y, th);
-
-    // std::cout << "[encoder_odometry::integrate_measurement_encoder()]  x " << x << "  y " << y << "  th " << th << std::endl;
 
     {
         std::lock_guard<std::mutex> lock(mtx_encoders_);
@@ -162,10 +152,6 @@ void encoder_odometry::integrate_measurement_encoder(const Mat44_t& last_pose, M
         {
             if (is_first_calculation_)
             {
-                // std::cout << "encoders_size() " << encoders_.size()  << std::endl;
-                // std::cout << "(*encoders_.begin())->wheel_l_  " << (*encoders_.begin()).wheel_l_  << std::endl;
-                // std::cout << "(*encoders_.begin())->wheel_r_  " << (*encoders_.begin()).wheel_r_  << std::endl;
-
                 last_enc_l_ = (encoders_.front()).wheel_l_;
                 last_enc_r_ = (encoders_.front()).wheel_r_;
                 is_first_calculation_ = false;
@@ -220,33 +206,12 @@ void encoder_odometry::integrate_measurement_encoder(const Mat44_t& last_pose, M
                 th_traj_.push_back(th_);
                 time_traj_.push_back(enc.timestamp_);
 
-
-                // std::cout << std::setprecision(18);
-                // std::cout << "enc timestamp " << enc.timestamp_ << std::endl;
-                // std::cout << std::setprecision(10);
-                // std::cout << "dx " << dx << "  dy " << dy << "  dth " << dth << std::endl;
-                // std::cout << "x " << x << "  y " << y << "  th " << th << std::endl;
-                // std::cout << "x_ " << x_ << "  y_ " << y_ << "  th_ " << th_ << std::endl;
-                // std::cout << "cov\n" << cov << std::endl;
-                // std::cout << "enc diff l" << enc.wheel_l_ - last_enc_l_  << " dist " << dl << std::endl;
-                // std::cout << "enc diff r" << enc.wheel_r_ - last_enc_r_  << " dist " << dr << std::endl;            
-                // std::cout << "enc l " << enc.wheel_l_  << " last enc_l " <<  last_enc_l_ << " dist " << dl << std::endl;
-                // std::cout << "enc r " << enc.wheel_r_  << " last enc_r " <<  last_enc_r_ << " dist " << dr << std::endl;
-                // std::cout << std::setprecision(10) <<  "delta_t " << enc.delta_t_ << " v: " << enc.v_ << "  omega: " << enc.omega_ << std::endl;
-
-                // std::cout << "transform " << transform << "\n" << std::endl;
-                // std::cout << "pose " << pose << "\n" << std::endl;
-                // std::cout << std::endl;
-
-
                 last_enc_l_ = enc.wheel_l_;
                 last_enc_r_ = enc.wheel_r_;
                 num_processed_encoder_++;
             }
         }
 
-        // std::cout << "[encoder_odometry::integrate_measurement_encoder()]  x " << x << "  y " << y << "  th " << th << std::endl;
-        // std::cout << "cov\n" << cov.diagonal() << std::endl;
         next_pose = util::converter::SE2paramtoSE3(x, y, th);
         next_cov = util::converter::SE2covtoSE3cov(cov, 1e18);
         encoders_.erase(std::remove_if(encoders_.begin(),
@@ -256,12 +221,5 @@ void encoder_odometry::integrate_measurement_encoder(const Mat44_t& last_pose, M
     }
 
 }
-
-
-// void encoder_odometry::integrate_measurement_velocity(const Mat44_t& last_pose, Mat44_t& next_pose, const Mat66_t& last_cov, Mat66_t& next_cov, const double frame_time, int& num_processed_encoder_)
-// {
-
-// }
-
 
 } // napespace openvslam

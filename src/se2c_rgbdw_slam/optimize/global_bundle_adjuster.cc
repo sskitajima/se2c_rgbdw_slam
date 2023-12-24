@@ -40,8 +40,6 @@ void global_bundle_adjuster::optimize(const unsigned int lead_keyfrm_id_in_globa
     std::vector<bool> is_optimized_lm(lms.size(), true);
 
 
-    // std::cout << "[global_bundle_adjuster::optimize()] num all KF: " << keyfrms.size() << std::endl;
-
     // 2. optimizerを構築
 
     auto linear_solver = ::g2o::make_unique<::g2o::LinearSolverCSparse<::g2o::BlockSolver_6_3::PoseMatrixType>>();
@@ -90,41 +88,7 @@ void global_bundle_adjuster::optimize(const unsigned int lead_keyfrm_id_in_globa
         auto keyfrm_vtx = keyfrm_vtx_container.create_vertex(keyfrm, keyfrm->id_ == 0);
         optimizer.addVertex(keyfrm_vtx);
         num_vertex++;
-
-        // //! Proposed
-        // #ifdef ENABLE_PLANE_CONSTRAINT
-        // auto plane_constraint = plane_constraint_wrapper_->create_plane_constraint(optimizer, keyfrm->get_cam_pose(), sqrt_chi_sq, keyfrm->id_);
-        // optimizer.addEdge(plane_constraint);
-        // #endif
-
-        // #ifdef ENABLE_ODOMETRY_CONSTRAINT
-        // if(keyfrm->odom_from_ref_kf_ == nullptr)
-        // {
-        //     // std::cout << "keyfrm->odom_from_ref_kf_ == nullptr " << keyfrm->id_ << std::endl;
-        //     continue;
-        // } 
-
-        // data::keyframe* keyfrm_from = keyfrm->odom_from_ref_kf_->first;
-
-        // if(keyfrm_from == nullptr)
-        // {
-        //     std::cout << "[global_bundle_adjuster::optimize()] keyfrm_from is nullptr\n";
-        //     continue;
-        // }
-        
-        // auto odometry_constraint = odometry_constraint_wrapper_->create_odometry_constraint( optimizer, 
-        //                                                                                      (keyfrm->odom_from_ref_kf_)->second.first, 
-        //                                                                                      (keyfrm->odom_from_ref_kf_)->second.second, 
-        //                                                                                      sqrt_chi_sq,
-        //                                                                                      keyfrm_from->id_, 
-        //                                                                                      keyfrm->id_);
-        // optimizer.addEdge(odometry_constraint);
-
-        // // std::cout << "[global_bundle_adjuster::optimize()]: this KF id(vId2): " << keyfrm->id_ << " from_id(vId1): " << keyfrm_from->id_ << std::endl;
-        // // std::cout << "addVertex id: " << keyfrm->id_ << std::endl;
-        // #endif
     }
-    // std::cout << "[global_bundle_adjuster::optimize()] num vertex: " << num_vertex << std::endl;
 
     // 4. keyframeとlandmarkのvertexをreprojection edgeで接続する
 
@@ -227,9 +191,6 @@ void global_bundle_adjuster::optimize(const unsigned int lead_keyfrm_id_in_globa
                                                                         it.second
                                                                         );
         optimizer.addEdge(odometry_constraint);
-
-        // std::cout << "[local_bundle_adjuster::optimize()]: this KF id(vId2): " << keyfrm->id_ << " from_id(vId1): " << keyfrm_from_id << std::endl;
-        // std::cout << "addVertex id: " << keyfrm->id_ << std::endl;
         #endif
     }
 
