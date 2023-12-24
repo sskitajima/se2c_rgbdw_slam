@@ -136,8 +136,8 @@ Mat44_t tracking_module::visual_encoder_track(const cv::Mat& img, const cv::Mat&
 
         if(enable_plane_estimate)
         {
-                estimated_transform_irc_ = curr_frm_.cam_pose_cw_.inverse();
-                extrinsic_param_cr_ = estimated_transform_irc_.inverse();
+                estimated_transform_irc_ = Eigen::PartialPivLU<openvslam::Mat44_t>(curr_frm_.cam_pose_cw_).inverse();
+                extrinsic_param_cr_ = Eigen::PartialPivLU<openvslam::Mat44_t>(estimated_transform_irc_).inverse();
                 extrinsic_param_rc_ = estimated_transform_irc_;
         }
 
@@ -158,14 +158,14 @@ Mat44_t tracking_module::visual_encoder_track(const cv::Mat& img, const cv::Mat&
     else 
     {
         //! Proposed
-        Mat66_t odom_info = cov_from_ref_kf.inverse();
+        Mat66_t odom_info = Eigen::PartialPivLU<openvslam::Mat44_t>(cov_from_ref_kf).inverse();
         odom_info(0,0) *= odom_info_factor_xy_;
         odom_info(1,1) *= odom_info_factor_xy_;
         odom_info(5,5) *= odom_info_factor_th_;
         std::pair<data::keyframe*, std::pair<Mat44_t, Mat66_t>> odom_from_ref = std::make_pair(last_keyfrm_, std::make_pair(odom_from_ref_kf, odom_info));
         curr_frm_.odom_from_ref_kf_ = std::make_shared<std::pair<data::keyframe*, std::pair<Mat44_t, Mat66_t>>>(odom_from_ref);
 
-        set_reference_frame_pose(extrinsic_param_cr_ * odom_from_ref_kf.inverse() * extrinsic_param_rc_ * ref_keyfrm_->get_cam_pose());
+        set_reference_frame_pose(extrinsic_param_cr_ * Eigen::PartialPivLU<openvslam::Mat44_t>(odom_from_ref_kf).inverse() * extrinsic_param_rc_ * ref_keyfrm_->get_cam_pose());
 
 
         // apply replace of landmarks observed in the last frame

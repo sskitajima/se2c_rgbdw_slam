@@ -84,7 +84,7 @@ void trajectory_io::save_frame_trajectory(const std::string& path, const std::st
         const Mat44_t cam_pose_cw = rel_cam_pose_cr * cam_pose_rw;
         // const Mat44_t cam_pose_wc = cam_pose_cw.inverse();
 
-        const Mat44_t pose_irr = cam_pose_cw.inverse() * coord_transformer_->get_cr();
+        const Mat44_t pose_irr = Eigen::PartialPivLU<Mat44_t>(cam_pose_cw).inverse() * coord_transformer_->get_cr();
         const Mat44_t cam_pose_wc = pose_irr;       // for compatibility to the following code
 
         if (format == "KITTI") {
@@ -148,7 +148,7 @@ void trajectory_io::save_keyframe_trajectory(const std::string& path, const std:
         const Mat44_t cam_pose_cw = keyfrm->get_cam_pose();
         // const Mat44_t cam_pose_wc = cam_pose_cw.inverse();
 
-        const Mat44_t pose_irr = cam_pose_cw.inverse() * coord_transformer_->get_cr();
+        const Mat44_t pose_irr = Eigen::PartialPivLU<openvslam::Mat44_t>(cam_pose_cw).inverse() * coord_transformer_->get_cr();
         const Mat44_t cam_pose_wc = pose_irr;       // for compatibility to the following code
 
         const auto timestamp = keyfrm->timestamp_;

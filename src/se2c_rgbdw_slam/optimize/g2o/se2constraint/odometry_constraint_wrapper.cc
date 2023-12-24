@@ -38,7 +38,7 @@ namespace se2c {
     void odometry_constraint_wrapper::update_param()
     {
         extPara_rc_ = coord_transformer_->get_rc();
-        extPara_cr_ = extPara_rc_.inverse();
+        extPara_cr_ = coord_transformer_->get_cr();
 
         T_bc_ = ::openvslam::util::converter::to_g2o_SE3(extPara_rc_);
         Adj_T_bc_ = ::openvslam::util::se2c::Adj_TR(T_bc_);    
@@ -96,7 +96,7 @@ namespace se2c {
             for(int j = 0; j < i; j++)
                 info_cam(i,j) = info_cam(j,i);
 
-
+        // test
         info_cam *= num_feature_matching / 100.;
         // std::cout << "[odometry_constraint_wrapper::create_odometry_constraint()] num_feature_matching " << num_feature_matching << std::endl;
 

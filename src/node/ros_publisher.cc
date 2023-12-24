@@ -63,7 +63,7 @@ void ros_publisher::publish_keyframes()
     {
         geometry_msgs::Pose pose;
         auto pose_cir = keyfrm->get_cam_pose();
-        openvslam::Mat44_t pose_irr_r = (coord_transformer_->get_rc() * pose_cir).inverse();
+        openvslam::Mat44_t pose_irr_r = Eigen::PartialPivLU<openvslam::Mat44_t>(coord_transformer_->get_rc() * pose_cir).inverse();
 
         // translational factor
         pose.position.x = pose_irr_r(0, 3);

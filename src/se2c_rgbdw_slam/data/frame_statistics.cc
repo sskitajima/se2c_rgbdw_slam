@@ -52,7 +52,7 @@ void frame_statistics::replace_reference_keyframe(data::keyframe* old_keyfrm, da
 
         // Update relative pose
         const Mat44_t new_ref_cam_pose_cw = new_keyfrm->get_cam_pose();
-        const Mat44_t new_rel_cam_pose_cr = old_rel_cam_pose_cr * old_ref_cam_pose_cw * new_ref_cam_pose_cw.inverse();
+        const Mat44_t new_rel_cam_pose_cr = old_rel_cam_pose_cr * old_ref_cam_pose_cw * Eigen::PartialPivLU<Mat44_t>(new_ref_cam_pose_cw).inverse();
         rel_cam_poses_from_ref_keyfrms_.at(frm_id) = new_rel_cam_pose_cr;
     }
 

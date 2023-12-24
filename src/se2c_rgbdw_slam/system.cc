@@ -627,7 +627,8 @@ Mat44_t system::mainprocess()
     const auto t_enc = timer_.lap();
 
     const Mat44_t cam_pose_cir = tracker_->visual_encoder_track(rgbd_frame.rgb_frame_, rgbd_frame.depth_frame_, rgbd_frame.timestamp_, is_keyframe, wheel_odom_from_last_kf_, wheel_cov_from_last_kf_);   
-    const Mat44_t pose_irr_r = (coord_transformer_->get_rc() * cam_pose_cir).inverse();
+    Eigen::PartialPivLU<Mat44_t> lu(coord_transformer_->get_rc() * cam_pose_cir);
+    const Mat44_t pose_irr_r = lu.inverse();
 
     const auto t_track = timer_.lap();
 

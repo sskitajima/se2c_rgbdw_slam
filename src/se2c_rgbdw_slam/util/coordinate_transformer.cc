@@ -60,13 +60,13 @@ void coordinate_transformer::load_param(const YAML::Node& yaml_node)
                         yaml_transform[1][0].as<double>(-1), yaml_transform[1][1].as<double>(0), yaml_transform[1][2].as<double>(0), yaml_transform[1][3].as<double>(0),
                         yaml_transform[2][0].as<double>(0), yaml_transform[2][1].as<double>(-1), yaml_transform[2][2].as<double>(0), yaml_transform[2][3].as<double>(0),
                         yaml_transform[3][0].as<double>(0), yaml_transform[3][1].as<double>(0), yaml_transform[3][2].as<double>(0), yaml_transform[3][3].as<double>(1);
-    e_transform_cr_ = e_transform_rc_.inverse();
+    e_transform_cr_ = Eigen::PartialPivLU<openvslam::Mat44_t>(e_transform_rc_).inverse();
 
     Mrobot_to_cam_ = e_transform_rc_.block(0,0,3,3);
     Mcam_to_robot_ = Mrobot_to_cam_.transpose();
 
     Vrobot_to_cam_ = e_transform_rc_.block(0,3,3,1);
-    Vcam_to_robot_ << e_transform_rc_.inverse().block(0,3,3,1);
+    Vcam_to_robot_ << e_transform_cr_.block(0,3,3,1);
                        
 }
 
@@ -111,7 +111,9 @@ Mat44_t coordinate_transformer::get_rc() const
 void coordinate_transformer::set_cr(const Mat44_t& transform_cr)
 {
     e_transform_cr_ = transform_cr;
-    e_transform_rc_ = transform_cr.inverse();
+
+    Eigen::PartialPivLU<Mat44_t> lu(e_transform_cr_);
+    e_transform_rc_ = lu.inverse();
 
     plane_wrapper_->update_param();
     odometry_wrapper_->update_param();
@@ -120,7 +122,9 @@ void coordinate_transformer::set_cr(const Mat44_t& transform_cr)
 void coordinate_transformer::set_rc(const Mat44_t& transform_rc)
 {
     e_transform_rc_ = transform_rc;
-    e_transform_cr_ = transform_rc.inverse();
+
+    Eigen::PartialPivLU<Mat44_t> lu(e_transform_rc_);
+    e_transform_cr_ = lu.inverse();
 
     plane_wrapper_->update_param();
     odometry_wrapper_->update_param();
@@ -139,7 +143,7 @@ void coordinate_transformer::set_odometry_wrapper(const std::shared_ptr<optimize
 // T_rir -> T_icc
 Mat44_t coordinate_transformer::TransformRobot2Cam(const Mat44_t &robot_pose)
 {
-    Mat44_t cam_pose_icc = (e_transform_cr_ * robot_pose * e_transform_rc_).inverse();
+    Mat44_t cam_pose_icc = Eigen::PartialPivLU<Mat44_t>(e_transform_cr_ * robot_pose * e_transform_rc_).inverse();
     return cam_pose_icc;
 }
 

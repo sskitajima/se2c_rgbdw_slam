@@ -286,7 +286,11 @@ Mat44_t plane_estimator::estimate_transform_from_base(const std::vector<Vec3_t, 
     const Mat33_t est_rotation = R_rc_base_ * R_perturb_zx; 
     Mat44_t est;
     est.block(0,0,3,3) = est_rotation;
-    est.block(0,3,3,1) = transform_rc_default_.block(0,3,3,1); 
+    est.block(0,3,3,1) = transform_rc_default_.block(0,3,3,1);
+    est(3,0) = 0;
+    est(3,1) = 0;
+    est(3,2) = 0;
+    est(3,3) = 1;
 
     // std::cout << "R_perturb\n" << R_perturb << std::endl;
     // std::cout << "R_perturb_zx\n" << R_perturb_zx << std::endl;
